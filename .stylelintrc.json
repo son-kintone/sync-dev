@@ -1,0 +1,23 @@
+{
+  "extends": "stylelint-config-standard",
+  "rules": {
+    "color-hex-length": "short",
+    "color-named": "never",
+    "declaration-block-no-redundant-longhand-properties": true,
+    "font-family-name-quotes": "always-where-recommended",
+    "function-url-quotes": "always",
+    "length-zero-no-unit": true,
+    "selector-pseudo-element-colon-notation": "double",
+    "value-keyword-case": "lower",
+    "indentation": 2,
+    "max-empty-lines": 2,
+    "no-missing-end-of-source-newline": true,
+    "selector-class-pattern": null,
+    "custom-property-pattern": null
+  },
+  "ignoreFiles": [
+    "node_modules/**",
+    "dist/**",
+    "build/**"
+  ]
+}

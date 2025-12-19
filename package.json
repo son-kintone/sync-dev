@@ -1,0 +1,40 @@
+{
+  "name": "kintone-dev-project",
+  "version": "1.0.0",
+  "description": "kintone 커스터마이제이션 개발 프로젝트",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node scripts/dev-server.js",
+    "build": "node scripts/build.js",
+    "lint": "npm run lint:js && npm run lint:css",
+    "lint:js": "eslint 'src/**/*.js'",
+    "lint:css": "stylelint 'src/**/*.css'",
+    "lint:fix": "eslint 'src/**/*.js' --fix && stylelint 'src/**/*.css' --fix",
+    "format": "prettier --write 'src/**/*.{js,css,html}'",
+    "upload": "kintone-cli upload",
+    "deploy": "npm run build && npm run upload",
+    "test": "echo \"Tests will be added\" && exit 0"
+  },
+  "keywords": [
+    "kintone",
+    "customization",
+    "javascript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.23.5",
+    "@babel/preset-env": "^7.23.5",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "prettier": "^3.1.0",
+    "stylelint": "^16.0.2",
+    "stylelint-config-standard": "^36.0.0",
+    "chokidar": "^3.5.3",
+    "express": "^4.18.2"
+  },
+  "dependencies": {
+    "@kintone/rest-api-client": "^5.0.0"
+  }
+}

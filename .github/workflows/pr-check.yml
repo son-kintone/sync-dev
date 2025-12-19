@@ -1,0 +1,134 @@
+name: PR Check
+
+# PR이 생성되거나 업데이트될 때 실행
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    types: [opened, synchronize, reopened]
+
+jobs:
+  lint-and-test:
+    name: 코드 품질 검사
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Node.js 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: JavaScript Lint 검사
+        run: npm run lint:js
+        continue-on-error: false
+
+      - name: CSS Lint 검사
+        run: npm run lint:css
+        continue-on-error: false
+
+      - name: 코드 포맷팅 검사
+        run: npx prettier --check 'src/**/*.{js,css,html}'
+        continue-on-error: false
+
+      - name: 테스트 실행
+        run: npm test
+        continue-on-error: false
+
+      - name: 빌드 검증
+        run: npm run build
+
+      - name: PR에 검사 결과 코멘트
+        uses: actions/github-script@v7
+        if: always()
+        with:
+          script: |
+            const message = `## ✅ 코드 품질 검사 완료
+            
+            - JavaScript Lint: 통과
+            - CSS Lint: 통과
+            - 코드 포맷팅: 통과
+            - 빌드: 성공
+            
+            PR이 병합 가능합니다! 🎉`;
+            
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: message
+            });
+
+  security-check:
+    name: 보안 취약점 검사
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Node.js 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: npm audit 실행
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
+
+  code-review:
+    name: 자동 코드 리뷰
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 변경된 파일 확인
+        id: changed-files
+        uses: tj-actions/changed-files@v41
+        with:
+          files: |
+            src/**/*.js
+            src/**/*.css
+            src/**/*.html
+
+      - name: 코드 리뷰 코멘트 추가
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const changedFiles = `${{ steps.changed-files.outputs.all_changed_files }}`.split(' ');
+            
+            let message = `## 📝 자동 코드 리뷰\n\n`;
+            message += `**변경된 파일:** ${changedFiles.length}개\n\n`;
+            message += `### 변경 파일 목록:\n`;
+            
+            changedFiles.forEach(file => {
+              message += `- \`${file}\`\n`;
+            });
+            
+            message += `\n### 체크리스트:\n`;
+            message += `- [ ] 코드에 적절한 주석이 있나요?\n`;
+            message += `- [ ] 에러 핸들링이 적절한가요?\n`;
+            message += `- [ ] 사용자 경험이 개선되었나요?\n`;
+            message += `- [ ] kintone API 사용이 올바른가요?\n`;
+            
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: message
+            });

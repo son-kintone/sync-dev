@@ -1,0 +1,115 @@
+/**
+ * kintone Mobile CSS
+ * 모바일 환경을 위한 스타일
+ */
+
+/* 모바일 전용 버튼 */
+.mobile-custom-button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  margin: 10px 0;
+  touch-action: manipulation;
+}
+
+.mobile-custom-button:active {
+  background-color: #2980b9;
+  transform: scale(0.98);
+}
+
+/* 모바일 헤더 */
+.mobile-header {
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+/* 모바일 폼 필드 */
+.mobile-field {
+  margin-bottom: 20px;
+}
+
+.mobile-field label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #333;
+  font-size: 16px;
+}
+
+.mobile-field input[type="text"],
+.mobile-field textarea,
+.mobile-field select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.mobile-field input[type="text"]:focus,
+.mobile-field textarea:focus,
+.mobile-field select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+/* 모바일 리스트 아이템 */
+.mobile-list-item {
+  padding: 15px;
+  border-bottom: 1px solid #e9ecef;
+  background-color: white;
+  touch-action: manipulation;
+}
+
+.mobile-list-item:active {
+  background-color: #f8f9fa;
+}
+
+/* 터치 친화적인 여백 */
+.mobile-container {
+  padding: 15px;
+}
+
+/* 모바일 네비게이션 */
+.mobile-nav {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  background-color: white;
+  border-top: 1px solid #e9ecef;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.mobile-nav-item {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  color: #666;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.mobile-nav-item.active {
+  color: #3498db;
+  font-weight: bold;
+}
+
+/* 모바일 최적화: 큰 터치 영역 */
+@media (max-width: 768px) {
+  .touchable {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}

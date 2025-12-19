@@ -1,0 +1,129 @@
+/**
+ * kintone Desktop CSS
+ * 데스크톱 환경을 위한 스타일
+ */
+
+/* 커스텀 버튼 스타일 */
+.custom-button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 10px 5px;
+}
+
+.custom-button:hover {
+  background-color: #2980b9;
+}
+
+.custom-button:active {
+  background-color: #1c5980;
+}
+
+/* 헤더 커스터마이징 */
+.kintoneplugin-header {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+/* 레코드 목록 커스터마이징 */
+.recordlist-header-gaia {
+  padding: 20px 0;
+}
+
+/* 폼 필드 스타일 */
+.custom-field {
+  margin-bottom: 15px;
+}
+
+.custom-field label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.custom-field input[type="text"],
+.custom-field textarea,
+.custom-field select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.custom-field input[type="text"]:focus,
+.custom-field textarea:focus,
+.custom-field select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* 에러 메시지 스타일 */
+.error-message {
+  color: #e74c3c;
+  font-size: 12px;
+  margin-top: 5px;
+  display: none;
+}
+
+.error-message.show {
+  display: block;
+}
+
+/* 로딩 인디케이터 */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.loading-spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 성공 메시지 */
+.success-message {
+  background-color: #2ecc71;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 4px;
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+}
+
+.success-message::before {
+  content: '✓';
+  margin-right: 10px;
+  font-size: 20px;
+}

@@ -1,0 +1,18 @@
+{
+  "app": "{{APP_ID}}",
+  "scope": "ALL",
+  "desktop": {
+    "js": ["dist/desktop.js"],
+    "css": ["dist/desktop.css"]
+  },
+  "mobile": {
+    "js": ["dist/mobile.js"],
+    "css": ["dist/mobile.css"]
+  },
+  "config": {
+    "html": "config/config.html",
+    "js": ["config/config.js"],
+    "css": ["config/config.css"],
+    "required_params": []
+  }
+}

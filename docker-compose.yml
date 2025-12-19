@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  kintone-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kintone-development
+    volumes:
+      # 로컬 소스 코드를 컨테이너에 마운트 (핫 리로드 지원)
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    env_file:
+      - .env
+    stdin_open: true
+    tty: true
+    command: sh -c "npm install && npm run dev"
+    networks:
+      - kintone-network
+
+  # 선택사항: nginx를 통한 정적 파일 서빙
+  nginx:
+    image: nginx:alpine
+    container_name: kintone-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - kintone-dev
+    networks:
+      - kintone-network
+
+networks:
+  kintone-network:
+    driver: bridge

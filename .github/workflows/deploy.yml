@@ -1,0 +1,140 @@
+name: Deploy to kintone
+
+# main 브랜치에 푸시될 때 자동 배포
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # 수동 실행 가능
+
+jobs:
+  build:
+    name: 빌드 및 검증
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Node.js 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: Lint 검사
+        run: npm run lint
+
+      - name: 테스트 실행
+        run: npm test
+
+      - name: 프로덕션 빌드
+        run: npm run build
+
+      - name: 빌드 파일 업로드
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files
+          path: dist/
+          retention-days: 7
+
+  deploy:
+    name: kintone에 배포
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://${{ secrets.KINTONE_DOMAIN }}
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Node.js 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 빌드 파일 다운로드
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files
+          path: dist/
+
+      - name: kintone CLI 설치
+        run: npm install -g @kintone/cli
+
+      - name: kintone 설정 파일 생성
+        run: |
+          cat > .kintone-config.json << EOF
+          {
+            "domain": "${{ secrets.KINTONE_DOMAIN }}",
+            "username": "${{ secrets.KINTONE_USERNAME }}",
+            "password": "${{ secrets.KINTONE_PASSWORD }}",
+            "apps": [
+              {
+                "app": "${{ secrets.KINTONE_APP_ID }}",
+                "uploadConfig": {
+                  "desktop": {
+                    "js": "dist/desktop.js",
+                    "css": "dist/desktop.css"
+                  },
+                  "mobile": {
+                    "js": "dist/mobile.js",
+                    "css": "dist/mobile.css"
+                  }
+                }
+              }
+            ]
+          }
+          EOF
+
+      - name: kintone에 배포
+        run: |
+          kintone-cli upload --config .kintone-config.json
+        env:
+          KINTONE_DOMAIN: ${{ secrets.KINTONE_DOMAIN }}
+          KINTONE_USERNAME: ${{ secrets.KINTONE_USERNAME }}
+          KINTONE_PASSWORD: ${{ secrets.KINTONE_PASSWORD }}
+          KINTONE_APP_ID: ${{ secrets.KINTONE_APP_ID }}
+
+      - name: 배포 결과 알림
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const status = '${{ job.status }}';
+            const emoji = status === 'success' ? '✅' : '❌';
+            const message = `${emoji} **kintone 배포 ${status === 'success' ? '성공' : '실패'}**\n\n` +
+                          `- 브랜치: ${context.ref}\n` +
+                          `- 커밋: ${context.sha.substring(0, 7)}\n` +
+                          `- 배포자: ${context.actor}\n` +
+                          `- 시간: ${new Date().toLocaleString('ko-KR')}`;
+            
+            // Slack 알림이나 다른 알림 서비스 연동 가능
+            console.log(message);
+
+  notify:
+    name: 배포 완료 알림
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: 배포 상태 확인
+        run: |
+          echo "배포가 완료되었습니다."
+          echo "kintone 도메인: ${{ secrets.KINTONE_DOMAIN }}"
+          echo "앱 ID: ${{ secrets.KINTONE_APP_ID }}"
+
+      # Slack 알림 예제 (선택사항)
+      # - name: Slack 알림
+      #   uses: 8398a7/action-slack@v3
+      #   with:
+      #     status: ${{ job.status }}
+      #     text: 'kintone 배포가 완료되었습니다.'
+      #     webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      #   if: always()
